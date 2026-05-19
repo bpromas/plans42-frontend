@@ -1,17 +1,25 @@
-function App() {
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { PrivateRoute } from './components/PrivateRoute';
+import { Login } from './pages/Login';
+import { Spaces } from './pages/Spaces';
 
+export default function App() {
   return (
-    <section>
-      <h1>Plans42</h1>
-      <h3>para as coisas que mais importam</h3>
-      <div>
-        <form action="post" className="flex flex-col">
-          <input type="text" />
-          <input type="text" />
-        </form>
-      </div>
-    </section>
-  )
-}
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
 
-export default App
+          {/* Rotas protegidas */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/spaces" element={<Spaces />} />
+          </Route>
+
+          {/* Redireciona raiz para /spaces (ou /login se não autenticado) */}
+          <Route path="*" element={<Navigate to="/spaces" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
